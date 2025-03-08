@@ -19,7 +19,7 @@ interface Specialization {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://londondoggroomers.co.uk'
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://doggroomerslondon.com'
 
   // Fetch all businesses
   const { data: groomers } = await supabase
