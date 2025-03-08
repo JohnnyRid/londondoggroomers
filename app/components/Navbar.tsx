@@ -42,6 +42,9 @@ export default function Navbar() {
                 Contact
               </Link>
             </div>
+            <Link href="/contact" className="ml-4 px-4 py-2 rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors">
+              Register Your Business
+            </Link>
           </div>
           
           {/* Mobile menu button */}
@@ -109,6 +112,13 @@ export default function Navbar() {
             onClick={() => setIsMenuOpen(false)}
           >
             Contact
+          </Link>
+          <Link 
+            href="/contact"
+            className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-700 hover:bg-gray-50"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Register Your Business
           </Link>
         </div>
       </div>

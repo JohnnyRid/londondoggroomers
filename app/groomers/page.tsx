@@ -1,42 +1,66 @@
 import React from 'react';
-import { supabase } from '../../lib/supabase';
+import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
-import BusinessImage from '../components/BusinessImage';
+import BusinessImage from '@/app/components/BusinessImage';
 import { generateGroomerUrl, generateLocationUrl, generateSpecializationUrl, generateSlug } from '@/lib/urlUtils';
-import GroomerFilters from '../components/GroomerFilters';
+import GroomerFilters from '@/app/components/GroomerFilters';
 
-// Define types based on expected table structure
+// Type definitions
 interface Business {
   id: number;
   name: string;
   description?: string;
-  location?: string;
   location_id?: number;
   image_url?: string;
   rating?: number;
   review_count?: number;
-  created_at?: string;
-  locationName?: string;
-  email?: string;
-  featured?: boolean;
-  slug?: string;
   phone?: string;
+  email?: string;
   website?: string;
+  slug?: string;
+  services?: any;
+  locations?: { name: string };
+  locationName?: string;
 }
 
-async function getLocationNameById(id: string): Promise<string | null> {
+interface PageProps {
+  params: Record<string, never>;
+  searchParams: { [key: string]: string | string[] | undefined };
+}
+
+async function getLocationNameById(locationId: string): Promise<string | null> {
   try {
     const { data, error } = await supabase
       .from('locations')
       .select('name')
-      .eq('id', id)
-      .single();
-    
+      .eq('id', locationId)
+      .maybeSingle();
+      
     if (error) throw error;
-    
     return data?.name || null;
   } catch (error) {
-    console.error('Error fetching location name by ID:', error);
+    console.error('Error fetching location name:', error);
+    return null;
+  }
+}
+
+async function getSpecializationBySlug(slug: string): Promise<string | null> {
+  try {
+    const { data, error } = await supabase
+      .from('specializations')
+      .select('id')
+      .ilike('name', slug.replace(/-/g, ' '))
+      .limit(1)
+      .maybeSingle();
+      
+    if (error) {
+      console.error('Error fetching specialization by slug:', error);
+      return null;
+    }
+    
+    return data?.id?.toString() || null;
+  } catch (error) {
+    console.error('Error in getSpecializationBySlug:', error);
     return null;
   }
 }
@@ -47,13 +71,12 @@ async function getSpecializationNameById(id: string): Promise<string | null> {
       .from('specializations')
       .select('name')
       .eq('id', id)
-      .single();
-    
+      .maybeSingle();
+      
     if (error) throw error;
-    
     return data?.name || null;
   } catch (error) {
-    console.error('Error fetching specialization name by ID:', error);
+    console.error('Error fetching specialization name:', error);
     return null;
   }
 }
@@ -246,7 +269,6 @@ async function getGroomers(locationId?: string | null, specialization?: string |
     if (excludeId) {
       query = query.neq('id', excludeId);
     }
-
     // Add search filter if provided - search both name and description
     if (search) {
       query = query.or(`name.ilike.%${search}%,description.ilike.%${search}%`);
@@ -265,7 +287,7 @@ async function getGroomers(locationId?: string | null, specialization?: string |
     }
     
     // Execute the query
-    const { data, error } = await query;
+    let { data, error } = await query;
     
     if (error) throw error;
     
@@ -293,7 +315,7 @@ async function getGroomers(locationId?: string | null, specialization?: string |
     // Process the returned data to extract location name
     const processedData = data?.map(business => ({
       ...business,
-      locationName
+      locationName: business.locations?.name || 'London'
     })) || [];
     
     return processedData;
@@ -335,28 +357,6 @@ async function getAllSpecializations() {
   }
 }
 
-async function getSpecializationBySlug(slug: string): Promise<number | null> {
-  try {
-    const { data, error } = await supabase
-      .from('specializations')
-      .select('id')
-      .ilike('name', slug.replace(/-/g, ' '))
-      .single();
-    
-    if (error) throw error;
-    
-    return data?.id || null;
-  } catch (error) {
-    console.error('Error fetching specialization by slug:', error);
-    return null;
-  }
-}
-
-interface PageProps {
-  params: Record<string, never>;
-  searchParams: { [key: string]: string | string[] | undefined };
-}
-
 export default async function GroomersPage({
   searchParams,
 }: PageProps): Promise<React.ReactElement> {
@@ -370,7 +370,7 @@ export default async function GroomersPage({
   const allSpecializations = await getAllSpecializations();
 
   // Get groomers based on filters
-  const groomers: Business[] = [];
+  let groomers: Business[] = [];
   let title = "Dog Groomers in London";
   let description = "Find professional dog grooming services across London. Compare groomers, read reviews, and book appointments for your furry friend.";
   
@@ -506,7 +506,7 @@ export default async function GroomersPage({
             List your grooming business on our platform to reach more pet owners and grow your client base.
           </p>
           <Link 
-            href="/contact?subject=Business%20Listing%20Inquiry"
+            href="/contact"
             className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-md text-lg transition-colors"
           >
             Add Your Business

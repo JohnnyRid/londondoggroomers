@@ -6,11 +6,6 @@ import _BusinessImage from '../components/BusinessImage';
 import { generateGroomerUrl as _generateGroomerUrl } from '@/lib/urlUtils';
 import _SpecializationIcon from '../components/SpecializationIcon';
 
-// Define proper page params type
-type PageParams = {
-  slug: string;
-}
-
 // Define interfaces for type safety
 interface Location {
   id: number;
@@ -34,6 +29,11 @@ interface _Business {
   review_count?: number;
   slug: string;
   locationName?: string;
+}
+
+interface PageProps {
+  params: Promise<{ slug: string }>;
+  searchParams?: { [key: string]: string | string[] | undefined };
 }
 
 // This function determines if the slug is a location or specialization
@@ -62,7 +62,7 @@ async function getPageType(slug: string): Promise<{ type: 'location' | 'speciali
   }
 }
 
-export async function generateMetadata({ params }: { params: PageParams }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const slug = params.slug;
   const { type, data } = await getPageType(slug);
   
@@ -92,9 +92,11 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
   };
 }
 
-// Correctly type the page component props
-export default async function DynamicPage({ params }: { params: PageParams }) {
-  const slug = params.slug;
+export default async function DynamicPage({
+  params,
+  searchParams: _searchParams
+}: PageProps) {
+  const { slug } = await params;
   const { type, data } = await getPageType(slug);
   
   if (!type || !data) {

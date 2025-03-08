@@ -11,22 +11,20 @@ import { supabase } from '@/lib/supabase';
 import { Business, Service, BusinessJsonLd } from './types';
 
 // Type definitions for Next.js page props
-interface PageParams {
-  slug: string;
-}
-
 interface SearchParams {
   [key: string]: string | string[] | undefined;
 }
 
 interface PageProps {
-  params: PageParams;
+  params: { slug: string };
   searchParams?: SearchParams;
 }
 
-type StaticParams = {
-  params: PageParams;
-}
+// For Next.js internal use
+export type GenerateMetadataProps = {
+  params: { slug: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+};
 
 /**
  * Mock data for development/debugging purposes when the database connection fails
@@ -541,7 +539,7 @@ async function getFeaturedGroomerForLocation(locationId: number): Promise<Busine
   }
 }
 
-export async function generateMetadata({ params, searchParams }: PageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const { type, data } = await getPageType(params.slug);
 
   if (!type || !data) {
@@ -573,7 +571,7 @@ export async function generateMetadata({ params, searchParams }: PageProps): Pro
 
 export default async function DynamicPage({
   params,
-  searchParams
+  searchParams: _searchParams // Prefix with underscore to indicate intentionally unused
 }: PageProps): Promise<ReactNode> {
   const { type, data } = await getPageType(params.slug);
   
@@ -745,10 +743,10 @@ export default async function DynamicPage({
               List your grooming business on our platform to reach more pet owners in {data.name} and grow your client base.
             </p>
             <Link 
-              href={`/contact?subject=Business%20Listing%20Inquiry%20for%20${encodeURIComponent(data.name)}`}
+              href="/contact"
               className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-md text-lg transition-colors"
             >
-              Add Your Business
+              List Your Business
             </Link>
           </div>
         </div>

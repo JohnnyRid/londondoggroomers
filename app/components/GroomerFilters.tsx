@@ -13,18 +13,9 @@ export default function GroomerFilters({ locations, specializations }: GroomerFi
 
   // Get the current values from search params
   const currentLocationId = searchParams.get('location_id');
-  const currentSpecializationId = searchParams.get('specialization');
+  const currentSpecialization = searchParams.get('specialization');
   const currentSort = searchParams.get('sort') || 'rating';
   const currentSearch = searchParams.get('search') || '';
-
-  // Find the matching location and specialization options
-  const locationValue = currentLocationId 
-    ? locations.find(loc => loc.id.toString() === currentLocationId)?.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')
-    : "";
-
-  const specializationValue = currentSpecializationId
-    ? specializations.find(spec => spec.id.toString() === currentSpecializationId)?.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')
-    : "";
 
   const handleApplyFilters = () => {
     const locationSelect = document.getElementById('location') as HTMLSelectElement;
@@ -32,45 +23,40 @@ export default function GroomerFilters({ locations, specializations }: GroomerFi
     const searchInput = document.getElementById('search') as HTMLInputElement;
     const sortSelect = document.getElementById('sort') as HTMLSelectElement;
     
-    const locationValue = locationSelect?.value || '';
-    const serviceValue = serviceSelect?.value || '';
-    const searchValue = searchInput?.value || '';
-    const sortValue = sortSelect?.value || '';
+    const searchValue = searchInput?.value.trim() || '';
+    const sortValue = sortSelect?.value || 'rating';
     
-    const targetUrl = '/groomers';
     const queryParams = new URLSearchParams();
 
-    // Preserve sort parameter
-    if (sortValue && sortValue !== 'rating') {
-      queryParams.set('sort', sortValue);
-    }
-
-    // Preserve search parameter if any
-    if (searchValue) {
-      queryParams.set('search', searchValue);
-    }
-    
-    if (locationValue) {
-      // Extract location ID for query param
+    // Add location parameter if selected
+    if (locationSelect?.value) {
       const locationId = locationSelect.options[locationSelect.selectedIndex].getAttribute('data-id');
       if (locationId) {
         queryParams.set('location_id', locationId);
       }
-    } else if (serviceValue) {
-      // Get the selected specialization name
-      const selectedSpec = specializations.find(
-        spec => spec.id.toString() === serviceSelect.options[serviceSelect.selectedIndex].getAttribute('data-id')
-      );
-      if (selectedSpec) {
-        const serviceName = selectedSpec.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-        queryParams.set('specialization', serviceName);
+    }
+
+    // Add specialization parameter if selected
+    if (serviceSelect?.value) {
+      const specializationId = serviceSelect.options[serviceSelect.selectedIndex].getAttribute('data-id');
+      if (specializationId) {
+        queryParams.set('specialization', specializationId);
       }
     }
-    
-    // Append query parameters to URL if any
+
+    // Add search parameter if any
+    if (searchValue) {
+      queryParams.set('search', searchValue);
+    }
+
+    // Add sort parameter if not default
+    if (sortValue !== 'rating') {
+      queryParams.set('sort', sortValue);
+    }
+
+    // Build the final URL and navigate
     const queryString = queryParams.toString();
-    const finalUrl = queryString ? `${targetUrl}?${queryString}` : targetUrl;
-    
+    const finalUrl = queryString ? `/groomers?${queryString}` : '/groomers';
     router.push(finalUrl);
   };
 
@@ -89,7 +75,10 @@ export default function GroomerFilters({ locations, specializations }: GroomerFi
   };
 
   return (
-    <form className="flex flex-col md:flex-row gap-4" onSubmit={(e) => e.preventDefault()}>
+    <form className="flex flex-col md:flex-row gap-4" onSubmit={(e) => {
+      e.preventDefault();
+      handleApplyFilters();
+    }}>
       <div className="flex-grow">
         <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-1">Search</label>
         <input
@@ -108,13 +97,13 @@ export default function GroomerFilters({ locations, specializations }: GroomerFi
           name="location"
           onChange={handleLocationChange}
           className="w-full p-2 border rounded-md"
-          defaultValue={locationValue ? `/groomers/${locationValue}` : ""}
+          value={currentLocationId || ""}
         >
           <option value="">All London</option>
           {locations.map((location) => (
             <option 
               key={location.id} 
-              value={`/groomers/${location.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
+              value={location.id}
               data-id={location.id.toString()}
             >
               {location.name}
@@ -129,13 +118,13 @@ export default function GroomerFilters({ locations, specializations }: GroomerFi
           name="service"
           onChange={handleServiceChange}
           className="w-full p-2 border rounded-md"
-          defaultValue={specializationValue ? `/service/${specializationValue}` : ""}
+          value={currentSpecialization || ""}
         >
           <option value="">Any Service</option>
           {specializations.map((spec) => (
             <option 
               key={spec.id} 
-              value={`/service/${spec.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
+              value={spec.id}
               data-id={spec.id.toString()}
             >
               {spec.name}
@@ -149,7 +138,7 @@ export default function GroomerFilters({ locations, specializations }: GroomerFi
           id="sort"
           name="sort"
           className="w-full p-2 border rounded-md"
-          defaultValue={currentSort}
+          value={currentSort}
         >
           <option value="rating">Rating</option>
           <option value="reviews">Most Reviews</option>
@@ -158,8 +147,7 @@ export default function GroomerFilters({ locations, specializations }: GroomerFi
       </div>
       <div className="self-end">
         <button
-          type="button"
-          onClick={handleApplyFilters}
+          type="submit"
           className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition-colors w-full md:w-auto"
         >
           Apply Filters
