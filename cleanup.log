@@ -1,0 +1,8 @@
+Cleanup operation started at: 2025-03-05 14:17:09
+Target directory: app/groomers/[id]
+Action: Running PowerShell script to remove old [id] directory
+
+Notes:
+- This operation will remove the conflicting [id] route
+- The [slug] route is now the canonical path for groomer pages
+- All existing ID-based URLs will be redirected to slug-based URLs
