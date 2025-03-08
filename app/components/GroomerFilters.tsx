@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
+import { generateSlug } from '@/lib/urlUtils';
 
 interface GroomerFiltersProps {
   locations: Array<{ id: number; name: string }>;
@@ -12,7 +13,7 @@ export default function GroomerFilters({ locations, specializations }: GroomerFi
   const searchParams = useSearchParams();
 
   // Get the current values from search params
-  const currentLocationId = searchParams.get('location_id');
+  const currentLocation = searchParams.get('location');
   const currentSpecialization = searchParams.get('specialization');
   const currentSort = searchParams.get('sort') || 'rating';
   const currentSearch = searchParams.get('search') || '';
@@ -28,20 +29,22 @@ export default function GroomerFilters({ locations, specializations }: GroomerFi
     
     const queryParams = new URLSearchParams();
 
-    // Add location parameter if selected
+    // Add location parameter if selected - use slug form of name instead of ID
     if (locationSelect?.value) {
-      const locationId = locationSelect.options[locationSelect.selectedIndex].getAttribute('data-id');
-      if (locationId) {
-        queryParams.set('location_id', locationId);
-      }
+      const selectedIndex = locationSelect.selectedIndex;
+      const selectedLocationName = locationSelect.options[selectedIndex].text;
+      // Convert the name to a slug for SEO-friendly URLs
+      const locationSlug = generateSlug(selectedLocationName);
+      queryParams.set('location', locationSlug);
     }
 
-    // Add specialization parameter if selected
+    // Add specialization parameter if selected - use slug form of name instead of ID
     if (serviceSelect?.value) {
-      const specializationId = serviceSelect.options[serviceSelect.selectedIndex].getAttribute('data-id');
-      if (specializationId) {
-        queryParams.set('specialization', specializationId);
-      }
+      const selectedIndex = serviceSelect.selectedIndex;
+      const selectedSpecName = serviceSelect.options[selectedIndex].text;
+      // Convert the name to a slug for SEO-friendly URLs
+      const specSlug = generateSlug(selectedSpecName);
+      queryParams.set('specialization', specSlug);
     }
 
     // Add search parameter if any
@@ -60,18 +63,28 @@ export default function GroomerFilters({ locations, specializations }: GroomerFi
     router.push(finalUrl);
   };
 
-  const handleLocationChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    if (e.target.value) {
-      const serviceSelect = document.getElementById('service') as HTMLSelectElement;
-      if (serviceSelect) serviceSelect.value = '';
-    }
+  // Find the current location based on the slug from URL
+  const findCurrentLocation = () => {
+    if (!currentLocation) return "";
+    
+    // Try to find a location that matches the current slug
+    const location = locations.find(loc => 
+      generateSlug(loc.name) === currentLocation
+    );
+    
+    return location ? location.id.toString() : "";
   };
 
-  const handleServiceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    if (e.target.value) {
-      const locationSelect = document.getElementById('location') as HTMLSelectElement;
-      if (locationSelect) locationSelect.value = '';
-    }
+  // Find the current specialization object based on the slug from URL
+  const findCurrentSpecialization = () => {
+    if (!currentSpecialization) return "";
+    
+    // Try to find a specialization that matches the current slug
+    const spec = specializations.find(s => 
+      generateSlug(s.name) === currentSpecialization
+    );
+    
+    return spec ? spec.id.toString() : "";
   };
 
   return (
@@ -95,16 +108,14 @@ export default function GroomerFilters({ locations, specializations }: GroomerFi
         <select
           id="location"
           name="location"
-          onChange={handleLocationChange}
           className="w-full p-2 border rounded-md"
-          value={currentLocationId || ""}
+          defaultValue={findCurrentLocation()}
         >
           <option value="">All London</option>
           {locations.map((location) => (
             <option 
               key={location.id} 
-              value={location.id}
-              data-id={location.id.toString()}
+              value={location.id.toString()}
             >
               {location.name}
             </option>
@@ -116,16 +127,14 @@ export default function GroomerFilters({ locations, specializations }: GroomerFi
         <select
           id="service"
           name="service"
-          onChange={handleServiceChange}
           className="w-full p-2 border rounded-md"
-          value={currentSpecialization || ""}
+          defaultValue={findCurrentSpecialization()}
         >
           <option value="">Any Service</option>
           {specializations.map((spec) => (
             <option 
               key={spec.id} 
-              value={spec.id}
-              data-id={spec.id.toString()}
+              value={spec.id.toString()}
             >
               {spec.name}
             </option>
@@ -138,7 +147,7 @@ export default function GroomerFilters({ locations, specializations }: GroomerFi
           id="sort"
           name="sort"
           className="w-full p-2 border rounded-md"
-          value={currentSort}
+          defaultValue={currentSort}
         >
           <option value="rating">Rating</option>
           <option value="reviews">Most Reviews</option>

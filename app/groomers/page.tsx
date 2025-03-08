@@ -360,7 +360,7 @@ async function getAllSpecializations() {
 export default async function GroomersPage({
   searchParams,
 }: PageProps): Promise<React.ReactElement> {
-  const locationId = typeof searchParams?.location_id === 'string' ? searchParams.location_id : undefined;
+  const locationSlug = typeof searchParams?.location === 'string' ? searchParams.location : undefined;
   const specializationSlug = typeof searchParams?.specialization === 'string' ? searchParams.specialization : undefined;
   const sort = typeof searchParams?.sort === 'string' ? searchParams.sort : 'rating';
   const search = typeof searchParams?.search === 'string' ? searchParams.search : undefined;
@@ -374,30 +374,33 @@ export default async function GroomersPage({
   let title = "Dog Groomers in London";
   let description = "Find professional dog grooming services across London. Compare groomers, read reviews, and book appointments for your furry friend.";
   
-  if (locationId) {
-    // Handle location-specific page
-    const locationName = await getLocationNameById(locationId);
-    const featuredGroomer = await getFeaturedGroomerForLocation(locationId);
-    groomers = await getGroomers(locationId, undefined, featuredGroomer?.id, sort, search);
+  // Find location and specialization IDs from slugs
+  const location = locationSlug ? allLocations.find(loc => generateSlug(loc.name) === locationSlug) : null;
+  const specialization = specializationSlug ? allSpecializations.find(spec => generateSlug(spec.name) === specializationSlug) : null;
+  
+  // Determine the correct title and description based on filters
+  if (location && specialization) {
+    // Both location and specialization filters
+    const featuredGroomer = await getFeaturedGroomerForLocation(location.id.toString());
+    groomers = await getGroomers(location.id.toString(), specialization.id.toString(), featuredGroomer?.id, sort, search);
     
-    if (locationName) {
-      title = `Dog Groomers in ${locationName}`;
-      description = `Find the best professional dog groomers in ${locationName}. Compare services, read reviews, and book appointments for dog grooming in ${locationName}.`;
-    }
-  } else if (specializationSlug) {
-    // Handle specialization-specific page
-    const specializationId = await getSpecializationBySlug(specializationSlug);
-    if (specializationId) {
-      const specializationName = await getSpecializationNameById(specializationId.toString());
-      groomers = await getGroomers(undefined, specializationId.toString(), undefined, sort, search);
-      
-      if (specializationName) {
-        title = `${specializationName} Dog Grooming Services in London`;
-        description = `Find dog groomers offering ${specializationName} services in London. Expert groomers specializing in ${specializationName.toLowerCase()} for your pet's needs.`;
-      }
-    }
+    title = `${specialization.name} Dog Grooming in ${location.name}`;
+    description = `Find dog groomers offering ${specialization.name} services in ${location.name}. Expert groomers specializing in ${specialization.name.toLowerCase()} for your pet's needs.`;
+  } else if (location) {
+    // Location filter only
+    const featuredGroomer = await getFeaturedGroomerForLocation(location.id.toString());
+    groomers = await getGroomers(location.id.toString(), undefined, featuredGroomer?.id, sort, search);
+    
+    title = `Dog Groomers in ${location.name}`;
+    description = `Find the best professional dog groomers in ${location.name}. Compare services, read reviews, and book appointments for dog grooming in ${location.name}.`;
+  } else if (specialization) {
+    // Specialization filter only
+    groomers = await getGroomers(undefined, specialization.id.toString(), undefined, sort, search);
+    
+    title = `${specialization.name} Dog Grooming Services in London`;
+    description = `Find dog groomers offering ${specialization.name} services in London. Expert groomers specializing in ${specialization.name.toLowerCase()} for your pet's needs.`;
   } else {
-    // Default case - no location or specialization filters
+    // No filters
     groomers = await getGroomers(undefined, undefined, undefined, sort, search);
   }
   
