@@ -1,6 +1,19 @@
 import { MetadataRoute } from 'next'
 import sitemap from '../sitemap'
 
+function escapeXml(unsafe: string): string {
+  return unsafe.replace(/[<>&'"]/g, (c) => {
+    switch (c) {
+      case '<': return '&lt;';
+      case '>': return '&gt;';
+      case '&': return '&amp;';
+      case "'": return '&apos;';
+      case '"': return '&quot;';
+      default: return c;
+    }
+  });
+}
+
 export async function GET() {
   const items = await sitemap()
 
@@ -16,7 +29,7 @@ export async function GET() {
     
     return `
     <url>
-      <loc>${item.url}</loc>
+      <loc>${escapeXml(item.url)}</loc>
       <lastmod>${lastmod}</lastmod>
       <changefreq>${item.changeFrequency || 'weekly'}</changefreq>
       <priority>${item.priority || 0.5}</priority>
