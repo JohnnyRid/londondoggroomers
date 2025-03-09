@@ -1,7 +1,5 @@
 'use client';
-
 import { useState } from 'react';
-import { supabase } from '../../lib/supabase';
 import Link from 'next/link';
 
 export default function ContactForm() {
@@ -58,18 +56,23 @@ export default function ContactForm() {
     });
 
     try {
-      // Submit form data to Supabase
-      const { error } = await supabase.from('contact_messages').insert([
-        {
+      // Submit form data to the API endpoint
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
           name: formData.name,
           email: formData.email,
           message: formData.message,
-          created_at: new Date().toISOString(),
-        },
-      ]);
+        }),
+      });
 
-      if (error) {
-        throw error;
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Something went wrong');
       }
 
       // Success state
@@ -181,12 +184,10 @@ export default function ContactForm() {
             {formStatus.isSubmitting ? 'Sending...' : 'Send Message'}
           </button>
         </div>
-
         <p className="text-xs text-gray-500 mt-2">
           By submitting this form, you agree to our <Link href="/privacy/" className="text-blue-600 hover:underline">privacy policy</Link>.
         </p>
       </form>
-
       <div className="mt-4 flex justify-center">
         <Link href="/privacy/" className="text-sm text-gray-500 hover:text-gray-700">
           View our Privacy Policy
