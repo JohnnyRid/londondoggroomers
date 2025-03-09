@@ -316,7 +316,7 @@ export default async function Home() {
   
   return (
     <div className="min-h-screen">
-      {/* Header with Logo - Updated to use Black-London-Logo.svg */}
+      {/* Header with Logo - Updated to use Black-London-Logo.svg for both desktop & mobile */}
       <header className="bg-white py-4 px-4 sm:px-8 shadow-sm">
         <div className="max-w-6xl mx-auto flex justify-between items-center">
           <Link href="/" className="flex items-center">
@@ -329,16 +329,15 @@ export default async function Home() {
               className="hidden sm:block"
               priority
             />
-            {/* Mobile logo */}
+            {/* Mobile logo - now using same SVG but smaller size */}
             <div className="flex items-center sm:hidden">
               <Image 
-                src="/images/logo.svg" 
+                src="/images/Black-London-Logo.svg" 
                 alt="London Dog Groomers Logo" 
-                width={45} 
-                height={45}
+                width={120} 
+                height={30}
                 priority
               />
-              <span className="ml-2 text-lg font-semibold text-gray-900">London Dog</span>
             </div>
           </Link>
           <nav className="hidden md:flex gap-6">

@@ -28,7 +28,7 @@ export default function Navbar() {
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
               <Link href="/" className="flex items-center">
-                {/* Use a different logo based on screen size for better visibility */}
+                {/* Use same logo for both desktop and mobile, just different sizes */}
                 <Image 
                   src="/images/Black-London-Logo.svg" 
                   alt="London Dog Groomers Logo" 
@@ -37,16 +37,16 @@ export default function Navbar() {
                   className="hidden sm:block" // Hide on mobile
                   priority
                 />
-                {/* Mobile version with better visibility */}
-                <Image 
-                  src="/images/logo.svg" 
-                  alt="London Dog Groomers Logo" 
-                  width={45}
-                  height={45}
-                  className="sm:hidden" // Only show on mobile
-                  priority
-                />
-                <span className="ml-2 text-lg font-semibold text-gray-900 sm:hidden">London Dog</span>
+                {/* Mobile version - using same SVG logo but smaller */}
+                <div className="flex items-center sm:hidden">
+                  <Image 
+                    src="/images/Black-London-Logo.svg" 
+                    alt="London Dog Groomers Logo" 
+                    width={120}
+                    height={30}
+                    priority
+                  />
+                </div>
               </Link>
             </div>
           </div>
