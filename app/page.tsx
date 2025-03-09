@@ -355,7 +355,7 @@ export default async function Home() {
             <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
               Find Top Dog Groomers in London
             </h1>
-            <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg md:text-xl text-gray-700 max-w-2xl mx-auto">
               Connect with professional dog groomers near you. Read reviews, browse services, and book appointments online.
             </p>
           </div>
@@ -399,11 +399,11 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Locations Section - Updated with actual business counts */}
+      {/* Locations Section */}
       <section className="py-16 px-4 sm:px-8 bg-white">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold text-gray-800 mb-2 text-center">Browse by Area</h2>
-          <p className="text-gray-600 text-center mb-8 max-w-2xl mx-auto">
+          <p className="text-gray-700 text-center mb-8 max-w-2xl mx-auto">
             Find the perfect dog groomer in your London neighborhood
           </p>
           
@@ -416,7 +416,7 @@ export default async function Home() {
                   className="bg-gray-50 hover:bg-gray-100 p-4 rounded-lg border border-gray-200 transition-colors text-center"
                 >
                   <h3 className="font-semibold text-lg text-gray-800 mb-1">{location.name}</h3>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-gray-700">
                     {!location.business_count || location.business_count === 0 && "No groomers yet"}
                     {location.business_count === 1 && "1 groomer"}
                     {location.business_count && location.business_count > 1 && `${location.business_count} groomers`}
@@ -458,19 +458,19 @@ export default async function Home() {
                   <BusinessImage imageUrl={groomer.image_url} businessName={groomer.name} />
                   <div className="p-5 flex flex-col flex-grow">
                     <div className="flex-grow">
-                      <h3 className="font-bold text-xl mb-2">{groomer.name}</h3>
+                      <h3 className="font-bold text-xl text-gray-800 mb-2">{groomer.name}</h3>
                       {groomer.rating && (
                         <div className="flex items-center mb-2">
                           <span className="text-yellow-500 mr-1" suppressHydrationWarning>
-                            {"★".repeat(Math.floor(groomer.rating || 0))}
-                            {"☆".repeat(5 - Math.floor(groomer.rating || 0))}
+                            {"★".repeat(Math.floor(groomer.rating))}
+                            {"☆".repeat(5 - Math.floor(groomer.rating))}
                           </span>
-                          <span className="text-sm text-gray-600">
+                          <span className="text-sm text-gray-700">
                             ({groomer.review_count || 0} reviews)
                           </span>
                         </div>
                       )}
-                      <p className="text-gray-600 mb-4">{groomer.locationName || groomer.location || "London"}</p>
+                      <p className="text-gray-700 mb-4">{groomer.locationName || groomer.location || "London"}</p>
                       
                       {/* Display actual services if available */}
                       <div className="flex flex-wrap gap-2 mb-4">
@@ -551,11 +551,11 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Specialized Services Section - Updated for new data structure */}
+      {/* Specialized Services Section */}
       <section className="py-16 px-4 sm:px-8 bg-blue-50">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold text-gray-800 mb-4 text-center">Specialized Grooming Services</h2>
-          <p className="text-gray-600 text-center mb-10 max-w-2xl mx-auto">
+          <p className="text-gray-700 text-center mb-10 max-w-2xl mx-auto">
             Find groomers offering specialized services for your dog's specific needs
           </p>
           
@@ -620,24 +620,24 @@ export default async function Home() {
               <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-blue-600 text-2xl font-bold">1</span>
               </div>
-              <h3 className="font-semibold text-xl mb-3">Search</h3>
-              <p className="text-gray-600">Find dog groomers in your area by searching with your postcode or browsing our directory.</p>
+              <h3 className="font-semibold text-xl text-gray-800 mb-3">Search</h3>
+              <p className="text-gray-700">Find dog groomers in your area by searching with your postcode or browsing our directory.</p>
             </div>
             
             <div className="text-center">
               <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-blue-600 text-2xl font-bold">2</span>
               </div>
-              <h3 className="font-semibold text-xl mb-3">Compare</h3>
-              <p className="text-gray-600">Read reviews, check services and prices to find the perfect groomer for your dog.</p>
+              <h3 className="font-semibold text-xl text-gray-800 mb-3">Compare</h3>
+              <p className="text-gray-700">Read reviews, check services and prices to find the perfect groomer for your dog.</p>
             </div>
             
             <div className="text-center">
               <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-blue-600 text-2xl font-bold">3</span>
               </div>
-              <h3 className="font-semibold text-xl mb-3">Book</h3>
-              <p className="text-gray-600">Contact your chosen groomer directly or book an appointment through our platform.</p>
+              <h3 className="font-semibold text-xl text-gray-800 mb-3">Book</h3>
+              <p className="text-gray-700">Contact your chosen groomer directly or book an appointment through our platform.</p>
             </div>
           </div>
         </div>

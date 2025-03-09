@@ -12,8 +12,19 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
         gray: {
-          500: '#64748b', // Darker than default for better contrast
-          600: '#475569', // Darker than default for better contrast
+          500: '#64748b',
+          600: '#475569',
+          700: '#374151',
+          800: '#1f2937', // Darkened for better contrast
+          900: '#111827', // Added for maximum contrast
+        },
+        blue: {
+          50: '#eff6ff',
+          100: '#dbeafe',
+          600: '#1d4ed8', // Darkened for better button contrast
+          700: '#1e40af', // Adjusted for better contrast
+          800: '#1e3a8a', // Darkened for better text contrast
+          900: '#172554', // Added for maximum contrast
         }
       },
     },
