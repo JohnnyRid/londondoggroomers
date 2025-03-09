@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { generateSlug } from '@/lib/urlUtils';
+import { useCallback, useEffect, FormEvent } from 'react';
 
 interface GroomerFiltersProps {
   locations: Array<{ id: number; name: string }>;
@@ -18,53 +19,16 @@ export default function GroomerFilters({ locations, specializations }: GroomerFi
   const currentSort = searchParams.get('sort') || 'rating';
   const currentSearch = searchParams.get('search') || '';
 
-  const handleApplyFilters = () => {
-    const locationSelect = document.getElementById('location') as HTMLSelectElement;
-    const serviceSelect = document.getElementById('service') as HTMLSelectElement;
-    const searchInput = document.getElementById('search') as HTMLInputElement;
-    const sortSelect = document.getElementById('sort') as HTMLSelectElement;
-    
-    const searchValue = searchInput?.value.trim() || '';
-    const sortValue = sortSelect?.value || 'rating';
-    
-    const queryParams = new URLSearchParams();
-
-    // Add location parameter if selected
-    if (locationSelect?.value) {
-      const selectedIndex = locationSelect.selectedIndex;
-      const selectedLocation = locations.find(l => l.id.toString() === locationSelect.value);
-      if (selectedLocation) {
-        queryParams.set('location', generateSlug(selectedLocation.name));
-      }
-    }
-
-    // Add specialization parameter if selected
-    if (serviceSelect?.value) {
-      const selectedIndex = serviceSelect.selectedIndex;
-      const selectedSpec = specializations.find(s => s.id.toString() === serviceSelect.value);
-      if (selectedSpec) {
-        queryParams.set('specialization', generateSlug(selectedSpec.name));
-      }
-    }
-
-    // Add search parameter if any
-    if (searchValue) {
-      queryParams.set('search', searchValue);
-    }
-
-    // Add sort parameter if not default
-    if (sortValue !== 'rating') {
-      queryParams.set('sort', sortValue);
-    }
-
-    // Build the final URL and navigate
-    const queryString = queryParams.toString();
-    const finalUrl = queryString ? `/groomers?${queryString}` : '/groomers';
-    router.push(finalUrl);
-  };
+  // Debug current selection on mount
+  useEffect(() => {
+    console.log('Current location slug:', currentLocation);
+    console.log('Found match in locations:', 
+      locations.find(loc => generateSlug(loc.name) === currentLocation)?.name
+    );
+  }, [currentLocation, locations]);
 
   // Find the current location based on the slug from URL
-  const findCurrentLocation = () => {
+  const findCurrentLocation = useCallback(() => {
     if (!currentLocation) return "";
     
     // Try to find a location that matches the current slug
@@ -72,11 +36,17 @@ export default function GroomerFilters({ locations, specializations }: GroomerFi
       generateSlug(loc.name) === currentLocation
     );
     
-    return location ? location.id.toString() : "";
-  };
+    if (location) {
+      console.log('Found location match:', location.name, 'ID:', location.id);
+      return generateSlug(location.name);
+    }
+    
+    console.log('No location match found for slug:', currentLocation);
+    return "";
+  }, [currentLocation, locations]);
 
   // Find the current specialization based on the slug from URL
-  const findCurrentSpecialization = () => {
+  const findCurrentSpecialization = useCallback(() => {
     if (!currentSpecialization) return "";
     
     // Try to find a specialization that matches the current slug
@@ -84,14 +54,63 @@ export default function GroomerFilters({ locations, specializations }: GroomerFi
       generateSlug(s.name) === currentSpecialization
     );
     
-    return spec ? spec.id.toString() : "";
+    if (spec) {
+      return generateSlug(spec.name);
+    }
+    
+    return "";
+  }, [currentSpecialization, specializations]);
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); // Prevent the default form submission
+
+    // Create a new FormData object and explicitly select only the fields we want
+    const form = e.currentTarget;
+    const searchValue = (form.querySelector('#search') as HTMLInputElement)?.value || '';
+    const locationValue = (form.querySelector('#location') as HTMLSelectElement)?.value || '';
+    const serviceValue = (form.querySelector('#service') as HTMLSelectElement)?.value || '';
+    const sortValue = (form.querySelector('#sort') as HTMLSelectElement)?.value || 'rating';
+
+    console.log('Form values:', {
+      search: searchValue,
+      location: locationValue,
+      specialization: serviceValue,
+      sort: sortValue
+    });
+    
+    const queryParams = new URLSearchParams();
+
+    // Add parameters only if they have values
+    if (locationValue) {
+      queryParams.set('location', locationValue);
+    }
+
+    if (serviceValue) {
+      queryParams.set('specialization', serviceValue);
+    }
+
+    if (searchValue) {
+      queryParams.set('search', searchValue);
+    }
+
+    if (sortValue !== 'rating') {
+      queryParams.set('sort', sortValue);
+    }
+
+    // Build the final URL and navigate
+    const queryString = queryParams.toString();
+    console.log('Generated query string:', queryString);
+    const finalUrl = queryString ? `/groomers?${queryString}` : '/groomers';
+    console.log('Navigating to:', finalUrl);
+    router.push(finalUrl);
   };
 
   return (
-    <form className="flex flex-col md:flex-row gap-4" onSubmit={(e) => {
-      e.preventDefault();
-      handleApplyFilters();
-    }}>
+    <form 
+      className="flex flex-col md:flex-row gap-4" 
+      onSubmit={handleSubmit}
+      autoComplete="off" // Prevent browser from adding hidden fields
+    >
       <div className="flex-grow">
         <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-1">Search</label>
         <input
@@ -101,6 +120,7 @@ export default function GroomerFilters({ locations, specializations }: GroomerFi
           placeholder="Search by name or service..."
           className="w-full p-2 border rounded-md"
           defaultValue={currentSearch}
+          autoComplete="off"
         />
       </div>
       <div className="md:w-1/5">
@@ -110,12 +130,16 @@ export default function GroomerFilters({ locations, specializations }: GroomerFi
           name="location"
           className="w-full p-2 border rounded-md"
           defaultValue={findCurrentLocation()}
+          onChange={(e) => {
+            console.log('Location changed to:', e.target.value);
+          }}
+          autoComplete="off"
         >
           <option value="">All London</option>
           {locations.map((location) => (
             <option 
               key={location.id} 
-              value={location.id.toString()}
+              value={generateSlug(location.name)}
             >
               {location.name}
             </option>
@@ -126,15 +150,16 @@ export default function GroomerFilters({ locations, specializations }: GroomerFi
         <label htmlFor="service" className="block text-sm font-medium text-gray-700 mb-1">Service</label>
         <select
           id="service"
-          name="service"
+          name="specialization"
           className="w-full p-2 border rounded-md"
           defaultValue={findCurrentSpecialization()}
+          autoComplete="off"
         >
           <option value="">Any Service</option>
           {specializations.map((spec) => (
             <option 
               key={spec.id} 
-              value={spec.id.toString()}
+              value={generateSlug(spec.name)}
             >
               {spec.name}
             </option>
@@ -148,6 +173,7 @@ export default function GroomerFilters({ locations, specializations }: GroomerFi
           name="sort"
           className="w-full p-2 border rounded-md"
           defaultValue={currentSort}
+          autoComplete="off"
         >
           <option value="rating">Rating</option>
           <option value="reviews">Most Reviews</option>

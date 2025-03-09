@@ -375,12 +375,41 @@ export default async function GroomersPage({
   let description = "Find professional dog grooming services across London. Compare groomers, read reviews, and book appointments for your furry friend.";
   
   // Find location and specialization by matching their slugs
-  const location = locationSlug ? allLocations.find(loc => generateSlug(loc.name) === locationSlug) : null;
-  const specialization = specializationSlug ? allSpecializations.find(spec => generateSlug(spec.name) === specializationSlug) : null;
+  console.log("Looking for location with slug:", locationSlug);
+  
+  // Debug all location slugs
+  if (locationSlug) {
+    console.log("Available locations and their slugs:");
+    allLocations.forEach(loc => {
+      const slug = generateSlug(loc.name);
+      console.log(`- ${loc.name} (ID: ${loc.id}) -> slug: '${slug}', match: ${slug === locationSlug}`);
+    });
+  }
+  
+  // Robust location finding with additional logging
+  let location = null;
+  if (locationSlug) {
+    // Case-insensitive direct slug comparison
+    location = allLocations.find(
+      loc => generateSlug(loc.name).toLowerCase() === locationSlug.toLowerCase()
+    );
+    
+    if (!location) {
+      console.error(`No location found matching slug '${locationSlug}'`);
+    } else {
+      console.log(`Found location: ${location.name} (ID: ${location.id})`);
+    }
+  }
+
+  // Similar process for specialization
+  const specialization = specializationSlug 
+    ? allSpecializations.find(spec => generateSlug(spec.name).toLowerCase() === specializationSlug.toLowerCase())
+    : null;
 
   // Determine the correct title and description based on filters
   if (location && specialization) {
     // Both location and specialization filters
+    console.log(`Filtering by location ID '${location.id}' and specialization ID '${specialization.id}'`);
     const featuredGroomer = await getFeaturedGroomerForLocation(location.id.toString());
     groomers = await getGroomers(location.id.toString(), specialization.id.toString(), featuredGroomer?.id, sort, search);
     
@@ -388,6 +417,7 @@ export default async function GroomersPage({
     description = `Find dog groomers offering ${specialization.name} services in ${location.name}. Expert groomers specializing in ${specialization.name.toLowerCase()} for your pet's needs.`;
   } else if (location) {
     // Location filter only
+    console.log(`Filtering by location ID '${location.id}' only`);
     const featuredGroomer = await getFeaturedGroomerForLocation(location.id.toString());
     groomers = await getGroomers(location.id.toString(), undefined, featuredGroomer?.id, sort, search);
     
@@ -395,14 +425,18 @@ export default async function GroomersPage({
     description = `Find the best professional dog groomers in ${location.name}. Compare services, read reviews, and book appointments for dog grooming in ${location.name}.`;
   } else if (specialization) {
     // Specialization filter only
+    console.log(`Filtering by specialization ID '${specialization.id}' only`);
     groomers = await getGroomers(undefined, specialization.id.toString(), undefined, sort, search);
     
     title = `${specialization.name} Dog Grooming Services in London`;
     description = `Find dog groomers offering ${specialization.name} services in London. Expert groomers specializing in ${specialization.name.toLowerCase()} for your pet's needs.`;
   } else {
     // No filters
+    console.log('No filters applied');
     groomers = await getGroomers(undefined, undefined, undefined, sort, search);
   }
+  
+  console.log(`Found ${groomers.length} groomers matching criteria`);
   
   return (
     <div className="min-h-screen py-12 px-4 sm:px-8">
