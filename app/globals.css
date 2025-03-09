@@ -4,19 +4,23 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #000000;  /* Using pure black for maximum contrast */
+  --foreground: #1f2937;  /* Using a softer black for better readability */
   --gray-800: #1f2937;
   --gray-900: #111827;
   --blue-800: #1e40af;
   --blue-900: #172554;
 }
 
+/* Eliminate the dark mode color scheme toggle that's causing issues */
+/* We'll implement a manual toggle later if needed */
+/*
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
-    --foreground: #ffffff;  /* Using pure white for maximum contrast in dark mode */
+    --foreground: #ffffff;
   }
 }
+*/
 
 body {
   color: var(--foreground);
@@ -24,7 +28,8 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* Base text styles with proper contrast */
+/* Remove these overrides that cause mobile issues */
+/*
 .text-gray-600,
 .text-gray-700,
 .text-gray-800,
@@ -32,7 +37,6 @@ body {
   color: var(--foreground);
 }
 
-/* Ensure proper contrast for text containers */
 [class*="text-gray-"],
 .font-medium,
 .font-semibold,
@@ -45,10 +49,11 @@ li,
 a:not([class*="bg-"]) {
   background-color: var(--background);
 }
+*/
 
-/* Enhanced mobile contrast */
+/* Remove the problematic mobile overrides */
+/*
 @media (max-width: 640px) {
-  /* All text elements */
   [class*="text-gray-"],
   .font-medium,
   .font-semibold,
@@ -63,13 +68,11 @@ a:not([class*="bg-"]) {
     background-color: var(--background) !important;
   }
   
-  /* Service tags */
   .bg-blue-100.text-blue-800 {
     background-color: var(--blue-900) !important;
     color: #ffffff !important;
   }
   
-  /* All buttons and interactive elements */
   .text-white.bg-blue-600,
   .text-white.bg-blue-700,
   .bg-blue-600,
@@ -80,7 +83,6 @@ a:not([class*="bg-"]) {
     color: #ffffff !important;
   }
   
-  /* Links and interactive text */
   a:not([class*="bg-"]),
   button:not([class*="bg-"]),
   .text-blue-600,
@@ -89,33 +91,42 @@ a:not([class*="bg-"]) {
     color: var(--blue-900) !important;
   }
   
-  /* Force white backgrounds to be pure white */
   .bg-white {
     background-color: #ffffff !important;
   }
-
-  /* Add solid background to elements with transparent backgrounds */
+  
   [style*="background-color: rgba(0, 0, 0, 0)"],
   [style*="background-color: transparent"] {
     background-color: var(--background) !important;
   }
-
-  /* Ensure text on colored backgrounds has proper contrast */
+  
   .bg-blue-50 *,
   .bg-gray-50 * {
     color: var(--foreground) !important;
   }
-
-  /* Price list items */
+  
   li.flex {
     background-color: var(--background) !important;
     color: var(--foreground) !important;
   }
-
-  /* Contact items */
+  
   li.flex.items-start {
     background-color: var(--background) !important;
     color: var(--foreground) !important;
+  }
+}
+*/
+
+/* Simple responsive adjustments */
+@media (max-width: 640px) {
+  /* Make buttons more visible */
+  .bg-blue-600, .bg-blue-700 {
+    @apply shadow-md;
+  }
+  
+  /* Add mobile nav styles */
+  .mobile-nav-menu {
+    @apply bg-white border-t border-gray-200 shadow-md;
   }
 }
 

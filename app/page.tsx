@@ -320,13 +320,26 @@ export default async function Home() {
       <header className="bg-white py-4 px-4 sm:px-8 shadow-sm">
         <div className="max-w-6xl mx-auto flex justify-between items-center">
           <Link href="/" className="flex items-center">
+            {/* Desktop logo */}
             <Image 
               src="/images/Black-London-Logo.svg" 
               alt="London Dog Groomers Logo" 
               width={200} 
               height={50}
+              className="hidden sm:block"
               priority
             />
+            {/* Mobile logo */}
+            <div className="flex items-center sm:hidden">
+              <Image 
+                src="/images/logo.svg" 
+                alt="London Dog Groomers Logo" 
+                width={45} 
+                height={45}
+                priority
+              />
+              <span className="ml-2 text-lg font-semibold text-gray-900">London Dog</span>
+            </div>
           </Link>
           <nav className="hidden md:flex gap-6">
             <Link href="/groomers" className="text-gray-600 hover:text-blue-600">Find Groomers</Link>
@@ -336,7 +349,7 @@ export default async function Home() {
           <Link href="/contact" className="hidden md:block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition-colors">
             Register Your Business
           </Link>
-          <button className="md:hidden text-gray-800">
+          <button className="md:hidden text-gray-800 p-2 bg-gray-100 rounded-md hover:bg-gray-200">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
