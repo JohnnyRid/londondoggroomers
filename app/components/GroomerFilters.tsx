@@ -29,22 +29,22 @@ export default function GroomerFilters({ locations, specializations }: GroomerFi
     
     const queryParams = new URLSearchParams();
 
-    // Add location parameter if selected - use slug form of name instead of ID
+    // Add location parameter if selected
     if (locationSelect?.value) {
       const selectedIndex = locationSelect.selectedIndex;
-      const selectedLocationName = locationSelect.options[selectedIndex].text;
-      // Convert the name to a slug for SEO-friendly URLs
-      const locationSlug = generateSlug(selectedLocationName);
-      queryParams.set('location', locationSlug);
+      const selectedLocation = locations.find(l => l.id.toString() === locationSelect.value);
+      if (selectedLocation) {
+        queryParams.set('location', generateSlug(selectedLocation.name));
+      }
     }
 
-    // Add specialization parameter if selected - use slug form of name instead of ID
+    // Add specialization parameter if selected
     if (serviceSelect?.value) {
       const selectedIndex = serviceSelect.selectedIndex;
-      const selectedSpecName = serviceSelect.options[selectedIndex].text;
-      // Convert the name to a slug for SEO-friendly URLs
-      const specSlug = generateSlug(selectedSpecName);
-      queryParams.set('specialization', specSlug);
+      const selectedSpec = specializations.find(s => s.id.toString() === serviceSelect.value);
+      if (selectedSpec) {
+        queryParams.set('specialization', generateSlug(selectedSpec.name));
+      }
     }
 
     // Add search parameter if any
@@ -75,7 +75,7 @@ export default function GroomerFilters({ locations, specializations }: GroomerFi
     return location ? location.id.toString() : "";
   };
 
-  // Find the current specialization object based on the slug from URL
+  // Find the current specialization based on the slug from URL
   const findCurrentSpecialization = () => {
     if (!currentSpecialization) return "";
     

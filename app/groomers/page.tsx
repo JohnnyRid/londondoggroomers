@@ -374,10 +374,10 @@ export default async function GroomersPage({
   let title = "Dog Groomers in London";
   let description = "Find professional dog grooming services across London. Compare groomers, read reviews, and book appointments for your furry friend.";
   
-  // Find location and specialization IDs from slugs
+  // Find location and specialization by matching their slugs
   const location = locationSlug ? allLocations.find(loc => generateSlug(loc.name) === locationSlug) : null;
   const specialization = specializationSlug ? allSpecializations.find(spec => generateSlug(spec.name) === specializationSlug) : null;
-  
+
   // Determine the correct title and description based on filters
   if (location && specialization) {
     // Both location and specialization filters
