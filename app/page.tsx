@@ -387,15 +387,15 @@ export default async function Home() {
                   />
                 </div>
                 <div className="sm:w-1/3">
-                  <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                  <label htmlFor="location_id" className="block text-sm font-medium text-gray-700 mb-1">Location</label>
                   <select 
-                    id="location"
-                    name="location"
+                    id="location_id"
+                    name="location_id"
                     className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                   >
                     <option value="">All London</option>
                     {sortedLocations.map((location) => (
-                      <option key={location.id} value={generateSlug(location.name)}>{location.name}</option>
+                      <option key={location.id} value={location.id}>{location.name}</option>
                     ))}
                   </select>
                 </div>

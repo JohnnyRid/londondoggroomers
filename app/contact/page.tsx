@@ -85,8 +85,8 @@ export default function ContactPage() {
       <div className="bg-white py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <h1 className="text-3xl font-bold text-gray-800 mb-4">Contact Us</h1>
-            <p className="text-lg text-gray-700 max-w-2xl mx-auto">
+            <h1 className="text-3xl font-bold text-gray-900 mb-4">Contact Us</h1>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               Have questions about our service or need support? Get in touch with our team and we'll be happy to help.
             </p>
           </div>
@@ -125,7 +125,7 @@ export default function ContactPage() {
                     </div>
                     <div className="ml-3">
                       <p className="text-sm font-medium text-gray-700">Response Time</p>
-                      <p className="text-sm text-gray-700">
+                      <p className="text-sm text-gray-600">
                         We aim to respond to all inquiries within 24-48 hours during business days.
                       </p>
                     </div>
@@ -139,7 +139,7 @@ export default function ContactPage() {
                     </div>
                     <div className="ml-3">
                       <p className="text-sm font-medium text-gray-700">Office</p>
-                      <p className="text-sm text-gray-700">
+                      <p className="text-sm text-gray-600">
                         London, United Kingdom
                       </p>
                     </div>
