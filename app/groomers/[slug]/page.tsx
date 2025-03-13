@@ -96,25 +96,25 @@ export default async function GroomerPage({ params }: { params: PageParams }) {
         '@type': 'ListItem',
         'position': 1,
         'name': 'Home',
-        'item': `${siteUrl}`
+        'item': String(siteUrl)
       },
       {
         '@type': 'ListItem',
         'position': 2,
         'name': 'Dog Groomers',
-        'item': `${siteUrl}/groomers`
+        'item': String(`${siteUrl}/groomers`)
       },
       ...(locationName ? [{
         '@type': 'ListItem',
         'position': 3,
         'name': `${locationName} Dog Groomers`,
-        'item': `${siteUrl}${generateLocationUrl(locationName)}`
+        'item': String(`${siteUrl}${generateLocationUrl(locationName)}`)
       }] : []),
       {
         '@type': 'ListItem',
         'position': locationName ? 4 : 3,
         'name': groomer.name,
-        'item': `${siteUrl}${currentPath}`
+        'item': String(`${siteUrl}${currentPath}`)
       }
     ]
   };
