@@ -28,10 +28,12 @@ export function generateSlug(name: string): string {
 
 /**
  * Generate SEO-friendly URL for a location based on location name
+ * This now uses query parameters instead of path segments to match the filtering logic
  */
 export function generateLocationUrl(locationName: string): string {
   const slug = generateSlug(locationName);
-  return `/groomers/${slug}`;
+  // Changed from path segment to query parameter
+  return `/groomers?location=${slug}`;
 }
 
 /**

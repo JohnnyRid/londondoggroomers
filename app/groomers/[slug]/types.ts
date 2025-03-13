@@ -1,13 +1,3 @@
-export interface Service {
-  id?: string;
-  name: string;
-  description?: string;
-  price_from?: number;
-  price_to?: number;
-  duration_minutes?: number;
-  business_id?: number;
-}
-
 export interface Business {
   id: number;
   name: string;
@@ -16,60 +6,34 @@ export interface Business {
   image_url?: string;
   rating?: number;
   review_count?: number;
-  slug: string;
-  phone?: string;
-  website?: string;
-  email?: string;
-  featured?: boolean;
-  services?: Service[] | string;
-  locations?: {
-    name: string;
-  };
+  locations?: { name: string };
   locationName?: string;
+  slug?: string;
+  phone?: string;
+  email?: string;
+  website?: string;
+  address?: string;
+  latitude?: number;
+  longitude?: number;
+  place_id?: string;
+  services?: string | any[];
+  opening_hours?: string | any[];
 }
 
-export interface LocationInfo {
-  id: number;
-  name: string;
-}
-
-export interface BusinessJsonLd {
-  '@context': 'https://schema.org';
-  '@type': 'LocalBusiness';
-  '@id': string;
+export interface Service {
+  id: string | number;
   name: string;
   description?: string;
-  image?: string;
-  telephone?: string;
-  url?: string;
-  email?: string;
-  address: {
-    '@type': 'PostalAddress';
-    addressLocality: string;
-    addressCountry: 'GB';
-  };
-  priceRange: string;
-  aggregateRating?: {
-    '@type': 'AggregateRating';
-    ratingValue: number;
-    reviewCount: number;
-    bestRating: number;
-    worstRating: number;
-  };
-  hasOfferCatalog?: {
-    '@type': 'OfferCatalog';
-    name: string;
-    itemListElement: Array<{
-      '@type': 'Offer';
-      itemOffered: {
-        '@type': 'Service';
-        name: string;
-        description?: string;
-      };
-      price?: number;
-      priceCurrency: string;
-      availability: string;
-      priceValidUntil: string;
-    }>;
-  };
+  price_from?: number;
+  price_to?: number;
+  duration_minutes?: number;
+}
+
+export interface FAQ {
+  question: string;
+  answer: string;
+}
+
+export interface PageParams {
+  slug: string;
 }

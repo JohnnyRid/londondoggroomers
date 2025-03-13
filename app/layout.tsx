@@ -55,9 +55,9 @@ export const metadata: Metadata = {
     images: ['/images/dog-grooming.jpg'],
   },
   icons: {
-    icon: '/site-icon.svg',
-    shortcut: '/site-icon.svg',
-    apple: '/site-icon.svg',
+    icon: '/Site Icon Black Dog.svg',
+    shortcut: '/Site Icon Black Dog.svg',
+    apple: '/Site Icon Black Dog.svg',
   },
   robots: {
     index: true,
@@ -78,7 +78,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="icon" href="/site-icon.svg" />
+        <link rel="icon" href="/Site Icon Black Dog.svg" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         {/* Structured data for local business */}
         <script
